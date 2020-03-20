@@ -19,7 +19,6 @@ global timeStamp
 timeStamp = "%H:%M %d.%m.%Y"
 global tstam
 tstam = "%H"
-nowtime()
 
 class Group():
 	def __init__(self):
