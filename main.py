@@ -17,7 +17,8 @@ if debug_mode:
 	telebot.logger.setLevel(logging.DEBUG)
 global timeStamp
 timeStamp = "%H:%M %d.%m.%Y"
-
+global tstam
+tstam = "%H"
 (datetime.today()).replace(hour=int(datetime.today().strftime(tstam))+3)
 
 class Group():
