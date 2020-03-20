@@ -19,7 +19,7 @@ global timeStamp
 timeStamp = "%H:%M %d.%m.%Y"
 global tstam
 tstam = "%H"
-(datetime.today()).replace(hour=int(datetime.today().strftime(tstam))+3)
+nowtime()
 
 class Group():
 	def __init__(self):
@@ -42,6 +42,11 @@ class Human():
 
 'log_in'
 
+def nowtime():
+	temp = int(datetime.today().strftime(tstam))+3
+	if temp > 23:
+		temp -= 24
+	return (datetime.today()).replace(hour=temp)
 
 def safe_show(array, index):
 	return array[index] if index < len(array) else None
@@ -119,7 +124,7 @@ def canUnMute():
 			data = load()
 			user = data[i][1].participants[j]
 			if user[1].discipline:
-				if (datetime.today()).replace(hour=int(datetime.today().strftime(tstam))+3) >= user[1].discipline:
+				if nowtime() >= user[1].discipline:
 					data[i][1].participants[j][1].discipline = None
 					data[i][1].mutelist.remove(str(data[i][1].participants[j][0].id))
 					bot.send_message(f"{str(data[i][1].participants[j][0].id)}", "Наказание завершено.")
@@ -130,11 +135,11 @@ def canUnPost():
 	for i in data:
 		for j in data[i][1].participants:
 			for l in data[i][1].participants[j][1].tasks:
-				if data[i][1].participants[j][1].tasks[l][3] < (datetime.today()).replace(hour=int(datetime.today().strftime(tstam))+3):
+				if data[i][1].participants[j][1].tasks[l][3] < nowtime():
 					data = load()
 					data[i][1].participants[j][1].tasks.pop(l)
 					ts = "%d"
-					data[i][1].participants[j][1].discipline = ((datetime.today()).replace(hour=int(datetime.today().strftime(tstam))+3)).replace(day=int((datetime.today()).replace(hour=int(datetime.today().strftime(tstam))+3).strftime(ts))+1)
+					data[i][1].participants[j][1].discipline = (nowtime()).replace(day=int(nowtime().strftime(ts))+1)
 					data[i][1].mutelist.append(j)
 					bot.send_message(f"{str(data[i][1].participants[j][0].id)}", "Задача не выполнена в заданный срок.")
 					update(data)
@@ -279,7 +284,7 @@ def voteno(query):
 		if len(data[groupid][1].participants[userid1][1].tasks[taskkey][4][1]) >= NUMBER_OF_VOTES:
 			data[groupid][1].participants[userid1][1].tasks.pop(taskkey)
 			ts = "%d"
-			data[groupid][1].participants[userid1][1].discipline = ((datetime.today()).replace(hour=int(datetime.today().strftime(tstam))+3)).replace(day=int((datetime.today()).replace(hour=int(datetime.today().strftime(tstam))+3).strftime(ts))+1)
+			data[groupid][1].participants[userid1][1].discipline = (nowtime()).replace(day=int(nowtime().strftime(ts))+1)
 			data[groupid][1].mutelist.append(userid1)
 			update(data)
 			bot.delete_message(query.message.chat.id, query.message.message_id)
@@ -469,7 +474,7 @@ def register(query):
 # 	data = load()
 @bot.message_handler(func=lambda message: True)
 def deleteMess(message):
-	print((datetime.today()).replace(hour=int(datetime.today().strftime(tstam))+3).strftime(timeStamp))
+	print(nowtime().strftime(timeStamp))
 	if isGroup(message.chat.type) and str(message.from_user.id) in dict(load())[str(message.chat.id)][1].mutelist:
 		bot.delete_message(message.chat.id, message.message_id)
 
