@@ -1,6 +1,6 @@
 import requests
 
-
+TOKEN = '942507125:AAHYmIFiWXL1eiXBwvEOp3Esj3bgDi6Cwec'
 debug_mode = False
 NUMBER_OF_VOTES = 4
 
