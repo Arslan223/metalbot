@@ -19,7 +19,7 @@ global timeStamp
 timeStamp = "%H:%M %d.%m.%Y"
 global tstam
 tstam = "%H"
-
+tstamd = "%d"
 class Group():
 	def __init__(self):
 		self.participants = {}
@@ -45,6 +45,7 @@ def nowtime():
 	temp = int(datetime.today().strftime(tstam))+3
 	if temp > 23:
 		temp -= 24
+		return (datetime.today()).replace(hour=temp, day=int(datetime.today().strftime(tstamd))+1)
 	return (datetime.today()).replace(hour=temp)
 
 def safe_show(array, index):
