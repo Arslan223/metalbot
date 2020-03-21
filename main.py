@@ -45,7 +45,7 @@ class Human():
 
 
 
-def chstring(strob, strmut):
+def chstr(strob, strmut):
 	return strmut if MUTAKAMODE else strob
 
 def addowdo(message):
