@@ -142,15 +142,16 @@ def canUnPost():
 		for j in data[i][1].participants:
 			for l in data[i][1].participants[j][1].tasks:
 				if len(data[i][1].participants[j][1].tasks[l]) == 4:
-					if data[i][1].participants[j][1].tasks[l][3] < nowtime():
-						data = load()
-						data[i][1].participants[j][1].tasks.pop(l)
-						ts = "%d"
-						data[i][1].participants[j][1].discipline = (nowtime()).replace(day=int(nowtime().strftime(ts))+1)
-						data[i][1].mutelist.append(j)
-						bot.send_message(f"{str(data[i][1].participants[j][0].id)}", "Задача не выполнена в заданный срок.")
-						update(data)
-						showPanelManualy(str(data[i][1].participants[j][0].id), str(data[i][1].participants[j][0].id), str(data[i][0].id))
+					if data[i][1].participants[j][1].tasks[l][3]:
+						if data[i][1].participants[j][1].tasks[l][3] < nowtime():
+							data = load()
+							data[i][1].participants[j][1].tasks.pop(l)
+							ts = "%d"
+							data[i][1].participants[j][1].discipline = (nowtime()).replace(day=int(nowtime().strftime(ts))+1)
+							data[i][1].mutelist.append(j)
+							bot.send_message(f"{str(data[i][1].participants[j][0].id)}", "Задача не выполнена в заданный срок.")
+							update(data)
+							showPanelManualy(str(data[i][1].participants[j][0].id), str(data[i][1].participants[j][0].id), str(data[i][0].id))
 					
 
 def makeVoting(photomess, group, taskkey, channel_id):
