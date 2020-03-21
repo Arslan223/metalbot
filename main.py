@@ -141,8 +141,8 @@ def canUnPost():
 	for i in data:
 		for j in data[i][1].participants:
 			for l in data[i][1].participants[j][1].tasks:
-				if data[i][1].participants[j][1].tasks[l][3] < nowtime():
-					if len(data[i][1].participants[j][1].tasks[l]) == 4:
+				if len(data[i][1].participants[j][1].tasks[l]) == 4:
+					if data[i][1].participants[j][1].tasks[l][3] < nowtime():
 						data = load()
 						data[i][1].participants[j][1].tasks.pop(l)
 						ts = "%d"
