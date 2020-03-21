@@ -1,9 +1,10 @@
 import requests
+global MUTAKAMODE
 
 TOKEN = '942507125:AAHYmIFiWXL1eiXBwvEOp3Esj3bgDi6Cwec'
 debug_mode = False
 NUMBER_OF_VOTES = 3
-
+MUTAKAMODE = True
 
 import telebot, pickle, time
 from datetime import datetime
@@ -18,6 +19,7 @@ if debug_mode:
 global timeStamp
 timeStamp = "%H:%M %d.%m.%Y"
 global tstam
+
 tstam = "%H"
 tstamd = "%d"
 class Group():
@@ -40,6 +42,11 @@ class Human():
 
 
 'log_in'
+
+
+
+def chstring(strob, strmut):
+	return strmut if MUTAKAMODE else strob
 
 def addowdo(message):
 	if load() == {}:
@@ -133,7 +140,7 @@ def canUnMute():
 				if nowtime() >= user[1].discipline:
 					data[i][1].participants[j][1].discipline = None
 					data[i][1].mutelist.remove(str(data[i][1].participants[j][0].id))
-					bot.send_message(f"{str(data[i][1].participants[j][0].id)}", "Наказание завершено.")
+					bot.send_message(f"{str(data[i][1].participants[j][0].id)}", chstr("Ты свободен, брат!\nТеперь вех!а отсюда", "Наказание закончено!"))
 					update(data)
 
 def canUnPost():
@@ -149,7 +156,7 @@ def canUnPost():
 							ts = "%d"
 							data[i][1].participants[j][1].discipline = (nowtime()).replace(day=int(nowtime().strftime(ts))+1)
 							data[i][1].mutelist.append(j)
-							bot.send_message(f"{str(data[i][1].participants[j][0].id)}", "Задача не выполнена в заданный срок.")
+							bot.send_message(f"{str(data[i][1].participants[j][0].id)}", chstr("Задача не выполнена в заданный срок.\nТакой ты камень", "Задача не выполнена в заданный срок."))
 							update(data)
 							showPanelManualy(str(data[i][1].participants[j][0].id), str(data[i][1].participants[j][0].id), str(data[i][0].id))
 					
@@ -184,7 +191,7 @@ def getargss(message):
 	user = group[1].participants[str(message.from_user.id)][0]
 	taskkey = data[str(group[0].id)][1].participants[str(user.id)][1].giving_args
 	channel_id = group[1].c_id
-	bot.reply_to(message, "Принято!")
+	bot.reply_to(message, "гей")
 	makeVoting(message, group, taskkey, channel_id)
 	showPanelManualy(str(message.chat.id), str(message.from_user.id), str(group[0].id))
 
@@ -201,8 +208,8 @@ def showPanelManualy(messagechatid, messagefrom_userid, chat_id):
 	markup.row(btn1)
 	markup.row(btn2)
 	markup.row(btn3)
-	string = f"Здравствуйте, {userdata[0].first_name}!\n"
-	string+="\nУ вас нет наказаний." if userdata[1].discipline == None else "Вам нельзя писать в чат до \n*"+userdata[1].discipline.strftime(timeStamp)+"*"
+	string = chstr(f"Ассаламу алейкум ва рахматулахи тааля ва баракату, брат(/сестра) {userdata[0].first_name}!\n", f"Здравствуйте, {userdata[0].first_name}!\n")
+	string+=chstr("\nТы чист, уцы", "У вас нет наказаний.") if userdata[1].discipline == None else "\nТебе нельзя писать в чат до \n*"+userdata[1].discipline.strftime(timeStamp)+"*"
 	bot.send_message(messagechatid, string, reply_markup=markup, parse_mode="Markdown")
 
 @bot.message_handler(commands=['start'], func=lambda message: message.text[17:])
@@ -217,8 +224,8 @@ def showPanel(message):
 	markup.row(btn1)
 	markup.row(btn2)
 	markup.row(btn3)
-	string = f"Здравствуйте, {userdata[0].first_name}!\n"
-	string+="\nУ вас нет наказаний." if userdata[1].discipline == None else "Вам нельзя писать в чат до \n*"+userdata[1].discipline.strftime(timeStamp)+"*"
+	string = chstr(f"Ассаламу алейкум ва рахматулахи тааля ва баракату, брат(/сестра) {userdata[0].first_name}!\n", f"Здравствуйте, {userdata[0].first_name}!\n")
+	string+=chstr("\nТы чист, уцы", "У вас нет наказаний.") if userdata[1].discipline == None else "\nТебе нельзя писать в чат до \n*"+userdata[1].discipline.strftime(timeStamp)+"*"
 	bot.send_message(message.chat.id, string, reply_markup=markup, parse_mode="Markdown")
 
 @bot.message_handler(commands=['reg'])
@@ -229,16 +236,16 @@ def joinToGroup(message):
 	print(1)
 	if str(message.from_user.id) in data[str(message.chat.id)][1].participants:
 		markup = telebot.types.InlineKeyboardMarkup()
-		itembtn = telebot.types.InlineKeyboardButton("Войти", callback_data="login")
+		itembtn = telebot.types.InlineKeyboardButton(chstr("Зайти","Войти"), callback_data="login")
 		markup.row(itembtn)
 		print(2)
-		bot.reply_to(message, "Вы уже зарегистрированы.", reply_markup=markup)
+		bot.reply_to(message, chstr("ты уже состоишь в нашем гей-клубе.","Вы уже зарегистрированы."), reply_markup=markup)
 		update(data)
 	else:
 		markup = telebot.types.InlineKeyboardMarkup()
-		itembtn = telebot.types.InlineKeyboardButton("Зарегистрироваться", callback_data="register")
+		itembtn = telebot.types.InlineKeyboardButton(chstr("Зайти в ламбу","Зарегистрироваться"), callback_data="register")
 		markup.row(itembtn)
-		bot.reply_to(message, "Вы еще не зарегистрированы.", reply_markup=markup)
+		bot.reply_to(message, chstr("Монету кинь да","Вы еще не зарегистрированы."), reply_markup=markup)
 		update(data)
 
 @bot.message_handler(commands=['addchannel'], func=lambda message: isGroup(message.chat.type))
@@ -249,7 +256,7 @@ def addchannel(message):
 			if not(data[str(message.chat.id)][1].c_id):
 				channel_id = str(bot.get_chat(message.text[12:]).id)
 				data[str(message.chat.id)][1].c_id = str(channel_id)
-				bot.reply_to(message, "Успешно!")
+				bot.reply_to(message, chstr("Ай сау!","Успешно!"))
 				data[str(message.chat.id)][1].url_of_channel = message.text[12:]
 				update(data)
 			else:
@@ -273,9 +280,9 @@ def voteyes(query):
 		if len(data[groupid][1].participants[userid1][1].tasks[taskkey][4][0]) >= NUMBER_OF_VOTES:
 			data[groupid][1].participants[userid1][1].tasks.pop(taskkey)
 			bot.delete_message(query.message.chat.id, query.message.message_id)
-			bot.send_message(query.message.chat.id, f"{data[groupid][1].participants[userid1][0].first_name} выполнил свою задачу✅")
+			bot.send_message(query.message.chat.id, f"{data[groupid][1].participants[userid1][0].first_name} "+ chstr("успешно исполнил, циу✅","выполнил свою задачу✅"))
 	else:
-		bot.answer_callback_query(query.id, "Вы уже голосовали!", show_alert=True)
+		bot.answer_callback_query(query.id, chstr("Ты хоть куда э, голосовал же уже🤬","Вы уже голосовали!"), show_alert=True)
 	update(data)
 
 @bot.callback_query_handler(func=lambda query: "vno" in list(map(str, query.data.split("&"))))
@@ -295,17 +302,17 @@ def voteno(query):
 			data[groupid][1].mutelist.append(userid1)
 			update(data)
 			bot.delete_message(query.message.chat.id, query.message.message_id)
-			bot.send_message(query.message.chat.id, f"{data[groupid][1].participants[userid1][0].first_name} не выполнил свою задачу❌")
+			bot.send_message(query.message.chat.id, f"{data[groupid][1].participants[userid1][0].first_name} "+ chstr("сбалаболил, не пацан он❌","не выполнил свою задачу❌"))
 			showPanelManualy(datas[4], userid1, groupid)
 	else:
-		bot.answer_callback_query(query.id, "Вы уже голосовали!", show_alert=True)
+		bot.answer_callback_query(query.id, chstr("Ты хоть куда э, голосовал же уже🤬","Вы уже голосовали!"), show_alert=True)
 	update(data)
 
 @bot.callback_query_handler(func=lambda query: "didthetask" in query.data)
 def didthetask(query):
 	chat_id = query.data[:query.data.find('didthetask')]
 	taskkey = query.data[len(chat_id)+10:]
-	bot.send_message(query.message.chat.id, "Отправьте фото-доказательство выполнения задачи")
+	bot.send_message(query.message.chat.id, chstr("пруфы опусти","Отправьте фото-доказательство выполнения задачи"))
 	data = load()
 	data[chat_id][1].participants[str(query.from_user.id)][1].giving_args = taskkey
 	update(data)
@@ -313,7 +320,7 @@ def didthetask(query):
 @bot.callback_query_handler(func=lambda query: "addtask" in query.data)
 def addtask(query):
 	chat_id = query.data[7:]
-	bot.send_message(query.message.chat.id, "Введите название задачи\n*P.S. Одним словом до 12 букв*")
+	bot.send_message(query.message.chat.id, chstr("Введи название задачи, брат","Введите название задачи")+"\n*P.S. Одним словом до 12 букв*")
 	data = load()
 	data[chat_id][1].participants[str(query.from_user.id)][1].adding_name = True
 	update(data)
@@ -324,7 +331,7 @@ def showtask(query):
 	data = load()
 	tasks = data[chat_id][1].participants[str(query.from_user.id)][1].tasks
 	if tasks:
-		bot.send_message(query.message.chat.id, "Ваши задачи:")
+		bot.send_message(query.message.chat.id, chstr("Твои задачи, брат:","Ваши задачи:"))
 		string = ""
 		ch = True
 		for i in list(tasks.keys()):
@@ -343,14 +350,14 @@ def showtask(query):
 			markup = telebot.types.InlineKeyboardMarkup()
 			itembtn = telebot.types.InlineKeyboardButton("Добавить", callback_data="addtask"+chat_id)
 			markup.row(itembtn)
-			bot.send_message(query.message.chat.id, "У вас нет задач!", reply_markup=markup)
+			bot.send_message(query.message.chat.id, chstr("У тебя нет задач, гей","У вас нет задач!"), reply_markup=markup)
 
 
 	else:
 		markup = telebot.types.InlineKeyboardMarkup()
 		itembtn = telebot.types.InlineKeyboardButton("Добавить", callback_data="addtask"+chat_id)
 		markup.row(itembtn)
-		bot.send_message(query.message.chat.id, "У вас нет задач!", reply_markup=markup)
+		bot.send_message(query.message.chat.id, chstr("У тебя нет задач, гей","У вас нет задач!"), reply_markup=markup)
 
 
 @bot.message_handler(func=lambda message: not(isGroup(message.chat.type)) and isaddingname(message.from_user.id))
@@ -361,7 +368,7 @@ def getname(message):
 	data[str(group[0].id)][1].participants[str(user.id)][1].adding_name = False
 	data[str(group[0].id)][1].participants[str(user.id)][1].adding_description = True
 	data[str(group[0].id)][1].participants[str(user.id)][1].tasks.update({message.text:[message.text, None, None, None]})
-	bot.send_message(message.chat.id, "Введите описание")
+	bot.send_message(message.chat.id, chstr("Введите описание","Введите описание"))
 
 	update(data)
 
@@ -374,7 +381,7 @@ def getdesc(message):
 	data[str(group[0].id)][1].participants[str(user.id)][1].adding_arguments = True
 	task = data[str(group[0].id)][1].participants[str(user.id)][1].tasks
 	data[str(group[0].id)][1].participants[str(user.id)][1].tasks[list(task.keys())[-1]][1] = message.text
-	bot.send_message(message.chat.id, "Опишите доказательство выполнения задачи")
+	bot.send_message(message.chat.id, chstr("Опиши доказательство выполнения задачи","Опишите доказательство выполнения задачи"))
 	update(data)
 
 @bot.message_handler(func=lambda message: not(isGroup(message.chat.type)) and isaddingarguments(message.from_user.id))
@@ -386,7 +393,7 @@ def getargs(message):
 	data[str(group[0].id)][1].participants[str(user.id)][1].adding_time = True
 	task = data[str(group[0].id)][1].participants[str(user.id)][1].tasks
 	data[str(group[0].id)][1].participants[str(user.id)][1].tasks[list(task.keys())[-1]][2] = message.text
-	bot.send_message(message.chat.id, "Введите время, до которого вы выполните задачу в формате\nXX:XX XX.XX.XXXX")
+	bot.send_message(message.chat.id, chstr("До скольки справишься?","Введите время, до которого вы выполните задачу в формате")+"\nXX:XX XX.XX.XXXX")
 	update(data)
 
 @bot.message_handler(func=lambda message: not(isGroup(message.chat.type)) and isaddingtime(message.from_user.id))
@@ -404,7 +411,7 @@ def gettime(message):
 
 	update(data)
 	markup = telebot.types.InlineKeyboardMarkup()
-	btn1 = telebot.types.InlineKeyboardButton("Все правильно", callback_data="taskdone"+str(group[0].id))
+	btn1 = telebot.types.InlineKeyboardButton(chstr("Все четко, брат","Все правильно"), callback_data="taskdone"+str(group[0].id))
 	btn2 = telebot.types.InlineKeyboardButton("Отмена", callback_data="canceltask"+str(group[0].id))
 	markup.row(btn1, btn2)
 	bot.send_message(message.chat.id, "Проверьте правильность введенных данных:", reply_markup=markup)
@@ -426,13 +433,13 @@ def canceltask(query):
 	data[str(group[0].id)][1].participants[str(user.id)][1].tasks.pop(list(task.keys())[-1])
 	update(data)
 	bot.edit_message_text("Действие отменено.", chat_id=query.message.chat.id, message_id=query.message.message_id)
-	bot.answer_callback_query(query.id, "Действие отменено.", url="t.me/mutakabot?start=showpanel"+str(chat_id))
+	bot.answer_callback_query(query.id, "Действие отменено.", url="t.me/MUTAKAMODE?start=showpanel"+str(chat_id))
 
 @bot.callback_query_handler(func=lambda query: "taskdone" in query.data)
 def donetask(query):
 	chat_id = query.data[8:]
 	bot.edit_message_text("Задача добавлена.", chat_id=query.message.chat.id, message_id=query.message.message_id)
-	bot.answer_callback_query(query.id, "Задача добавлена.", url="t.me/mutakabot?start=showpanel"+str(chat_id))
+	bot.answer_callback_query(query.id, "Задача добавлена.", url="t.me/MUTAKAMODE?start=showpanel"+str(chat_id))
 
 @bot.callback_query_handler(func=lambda query: query.data == "changechannel")
 def changechannel(query):
@@ -451,9 +458,9 @@ def changechannel(query):
 def login(query):
 	data = load()
 	if str(query.from_user.id) in data[str(query.message.chat.id)][1].participants:
-		bot.answer_callback_query(query.id, url="t.me/mutakabot?start=showpanel"+str(query.message.chat.id))
+		bot.answer_callback_query(query.id, url="t.me/MUTAKAMODE?start=showpanel"+str(query.message.chat.id))
 	else:
-		bot.answer_callback_query(query.id, "Вы не зарегистрированы!", show_alert=True)
+		bot.answer_callback_query(query.id, chstr("Ты не зареган да э","Вы не зарегистрированы!"), show_alert=True)
 
 
 
@@ -465,14 +472,14 @@ def login(query):
 def register(query):
 	data = load()
 	if str(query.from_user.id) in data[str(query.message.chat.id)][1].participants:
-		bot.answer_callback_query(query.id, "Вы уже зарегистрированы!", show_alert=True)
+		bot.answer_callback_query(query.id, chstr("Куда гонишь, машина? Зареган уже.","Вы уже зарегистрированы!"), show_alert=True)
 	else:
 		data[str(query.message.chat.id)][1].participants.update({str(query.from_user.id):[query.from_user, Human()]})
 		update(data)
-		bot.answer_callback_query(query.id, "Регистрация упешно завершена!", show_alert=False)
-		bot.edit_message_text("Вы зарегистрированы.", chat_id=query.message.chat.id, message_id=query.message.message_id)
+		bot.answer_callback_query(query.id, chstr("Заявка на вступление в гей-клуб одобрена","Регистрация успешно завершена!"), show_alert=False)
+		bot.edit_message_text(chstr("Ты в клубе(гей)","Вы зарегистрированы."), chat_id=query.message.chat.id, message_id=query.message.message_id)
 		markup = telebot.types.InlineKeyboardMarkup()
-		itembtn = telebot.types.InlineKeyboardButton("Войти", callback_data="login")
+		itembtn = telebot.types.InlineKeyboardButton(chstr("Зайти","Войти"), callback_data="login")
 		markup.row(itembtn)
 		bot.edit_message_reply_markup(reply_markup=markup, chat_id=query.message.chat.id, message_id=query.message.message_id)
 
@@ -488,6 +495,39 @@ def deleteMess(message):
 
 		canUnMute()
 		canUnPost()
+
+content_types=['photo']
+
+@bot.message_handler(content_types=['photo'])
+def deleteMess(message):
+	print(nowtime().strftime(timeStamp))
+	if load():
+		if isGroup(message.chat.type) and str(message.from_user.id) in dict(load())[str(message.chat.id)][1].mutelist:
+			bot.delete_message(message.chat.id, message.message_id)
+
+		canUnMute()
+		canUnPost()
+
+@bot.message_handler(content_types=['audio'])
+def deleteMess(message):
+	print(nowtime().strftime(timeStamp))
+	if load():
+		if isGroup(message.chat.type) and str(message.from_user.id) in dict(load())[str(message.chat.id)][1].mutelist:
+			bot.delete_message(message.chat.id, message.message_id)
+
+		canUnMute()
+		canUnPost()
+
+@bot.message_handler(content_types=['voice'])
+def deleteMess(message):
+	print(nowtime().strftime(timeStamp))
+	if load():
+		if isGroup(message.chat.type) and str(message.from_user.id) in dict(load())[str(message.chat.id)][1].mutelist:
+			bot.delete_message(message.chat.id, message.message_id)
+
+		canUnMute()
+		canUnPost()
+
 
 bot.polling(none_stop=True)
 
