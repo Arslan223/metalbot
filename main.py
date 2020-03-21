@@ -41,6 +41,12 @@ class Human():
 
 'log_in'
 
+def addowdo(message):
+	if load() == {}:
+		return not(str(message.chat.id) in load().keys()) and isGroup(message.chat.type)
+	else:
+		return False
+
 def nowtime():
 	temp = int(datetime.today().strftime(tstam))+3
 	if temp > 23:
@@ -161,7 +167,7 @@ def makeVoting(photomess, group, taskkey, channel_id):
 	update(data)
 	bot.send_photo(group[1].c_id, fileid, caption=string, reply_markup=markup, parse_mode="Markdown")
 
-@bot.message_handler(func=lambda message: not(str(message.chat.id) in load().keys()) and isGroup(message.chat.type))
+@bot.message_handler(func=lambda message: addowdo(message))
 def addGroup(message):
 	print(1)
 	data = load()
@@ -238,19 +244,18 @@ def joinToGroup(message):
 def addchannel(message):
 	data = load()
 	if len(message.text)>11:
-		if not(data[str(message.chat.id)][1].c_id):
-			url = f"https://api.telegram.org/bot{TOKEN}/getChat?chat_id={message.text[12:]}"
-			r = requests.get(url)
-			channel_id = r.json()['result']['id']
-			data[str(message.chat.id)][1].c_id = str(channel_id)
-			bot.reply_to(message, "Успешно!")
-			data[str(message.chat.id)][1].url_of_channel = message.text[12:]
-			update(data)
-		else:
-			markup = telebot.types.InlineKeyboardMarkup()
-			itembtn = telebot.types.InlineKeyboardButton("Удалить ссылку", callback_data="changechannel")
-			markup.row(itembtn)
-			bot.reply_to(message, "Ссылка на канал уже указана!", reply_markup=markup)
+		if data:
+			if not(data[str(message.chat.id)][1].c_id):
+				channel_id = str(bot.get_chat(message.text[12:]).id)
+				data[str(message.chat.id)][1].c_id = str(channel_id)
+				bot.reply_to(message, "Успешно!")
+				data[str(message.chat.id)][1].url_of_channel = message.text[12:]
+				update(data)
+			else:
+				markup = telebot.types.InlineKeyboardMarkup()
+				itembtn = telebot.types.InlineKeyboardButton("Удалить ссылку", callback_data="changechannel")
+				markup.row(itembtn)
+				bot.reply_to(message, "Ссылка на канал уже указана!", reply_markup=markup)
 
 
 
@@ -476,11 +481,12 @@ def register(query):
 @bot.message_handler(func=lambda message: True)
 def deleteMess(message):
 	print(nowtime().strftime(timeStamp))
-	if isGroup(message.chat.type) and str(message.from_user.id) in dict(load())[str(message.chat.id)][1].mutelist:
-		bot.delete_message(message.chat.id, message.message_id)
+	if load():
+		if isGroup(message.chat.type) and str(message.from_user.id) in dict(load())[str(message.chat.id)][1].mutelist:
+			bot.delete_message(message.chat.id, message.message_id)
 
-	canUnMute()
-	canUnPost()
+		canUnMute()
+		canUnPost()
 
 bot.polling(none_stop=True)
 
