@@ -1,10 +1,10 @@
 import requests
-global MUTAKAMODE
+global mutakabot
 
 TOKEN = '942507125:AAHYmIFiWXL1eiXBwvEOp3Esj3bgDi6Cwec'
 debug_mode = False
 NUMBER_OF_VOTES = 3
-MUTAKAMODE = True
+mutakabot = True
 
 import telebot, pickle, time
 from datetime import datetime
@@ -46,7 +46,7 @@ class Human():
 
 
 def chstr(strmut, strob):
-	return strmut if MUTAKAMODE else strob
+	return strmut if mutakabot else strob
 
 def addowdo(message):
 	if load() == {}:
@@ -433,13 +433,13 @@ def canceltask(query):
 	data[str(group[0].id)][1].participants[str(user.id)][1].tasks.pop(list(task.keys())[-1])
 	update(data)
 	bot.edit_message_text("Действие отменено.", chat_id=query.message.chat.id, message_id=query.message.message_id)
-	bot.answer_callback_query(query.id, "Действие отменено.", url="t.me/MUTAKAMODE?start=showpanel"+str(chat_id))
+	bot.answer_callback_query(query.id, "Действие отменено.", url="t.me/mutakabot?start=showpanel"+str(chat_id))
 
 @bot.callback_query_handler(func=lambda query: "taskdone" in query.data)
 def donetask(query):
 	chat_id = query.data[8:]
 	bot.edit_message_text("Задача добавлена.", chat_id=query.message.chat.id, message_id=query.message.message_id)
-	bot.answer_callback_query(query.id, "Задача добавлена.", url="t.me/MUTAKAMODE?start=showpanel"+str(chat_id))
+	bot.answer_callback_query(query.id, "Задача добавлена.", url="t.me/mutakabot?start=showpanel"+str(chat_id))
 
 @bot.callback_query_handler(func=lambda query: query.data == "changechannel")
 def changechannel(query):
@@ -458,7 +458,7 @@ def changechannel(query):
 def login(query):
 	data = load()
 	if str(query.from_user.id) in data[str(query.message.chat.id)][1].participants:
-		bot.answer_callback_query(query.id, url="t.me/MUTAKAMODE?start=showpanel"+str(query.message.chat.id))
+		bot.answer_callback_query(query.id, url="t.me/mutakabot?start=showpanel"+str(query.message.chat.id))
 	else:
 		bot.answer_callback_query(query.id, chstr("Ты не зареган да э","Вы не зарегистрированы!"), show_alert=True)
 
