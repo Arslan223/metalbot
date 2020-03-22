@@ -339,8 +339,9 @@ def didthetask(query):
 @bot.callback_query_handler(func=lambda query: "addtask" in query.data)
 def addtask(query):
 	chat_id = query.data[7:]
-	bot.send_message(query.message.chat.id, chstr(data[chat_id][1].gm, "Введи название задачи, брат","Введите название задачи")+"\n*P.S. Одним словом до 12 букв*")
 	data = load()
+	bot.send_message(query.message.chat.id, chstr(data[chat_id][1].gm, "Введи название задачи, брат","Введите название задачи")+"\n*P.S. Одним словом до 12 букв*")
+	
 	data[chat_id][1].participants[str(query.from_user.id)][1].adding_name = True
 	update(data)
 
