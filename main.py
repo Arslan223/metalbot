@@ -5,7 +5,7 @@ global mutakabot
 
 TOKEN = '942507125:AAHYmIFiWXL1eiXBwvEOp3Esj3bgDi6Cwec'
 debug_mode = False
-NUMBER_OF_VOTES = 2
+NUMBER_OF_VOTES = 5
 
 import telebot, pickle, time
 from datetime import datetime
@@ -292,6 +292,7 @@ def voteyes(query):
 	taskkey = datas[3]
 	channel_id = query.message.chat.id
 	data = load()
+	bot.answer_callback_query(query.id, chstr(data[groupid][1].gm, "Харашо да э. Я понял","Учтено!"), show_alert=False)
 	if not(str(query.from_user.id) in data[groupid][1].participants[userid1][1].tasks[taskkey][4][0] or str(query.from_user.id) in data[groupid][1].participants[userid1][1].tasks[taskkey][4][1]):
 		data[groupid][1].participants[userid1][1].tasks[taskkey][4][0].append(str(query.from_user.id))
 		if len(data[groupid][1].participants[userid1][1].tasks[taskkey][4][0]) >= NUMBER_OF_VOTES:
@@ -310,6 +311,7 @@ def voteno(query):
 	taskkey = datas[3]
 	channel_id = query.message.chat.id
 	data = load()
+	bot.answer_callback_query(query.id, chstr(data[groupid][1].gm, "Харашо да э. Я понял","Учтено!"), show_alert=False)
 	if not(str(query.from_user.id) in data[groupid][1].participants[userid1][1].tasks[taskkey][4][0] or str(query.from_user.id) in data[groupid][1].participants[userid1][1].tasks[taskkey][4][1]):
 		data[groupid][1].participants[userid1][1].tasks[taskkey][4][1].append(str(query.from_user.id))
 		if len(data[groupid][1].participants[userid1][1].tasks[taskkey][4][1]) >= NUMBER_OF_VOTES:
@@ -509,7 +511,7 @@ def register(query):
 	else:
 		data[str(query.message.chat.id)][1].participants.update({str(query.from_user.id):[query.from_user, Human()]})
 		update(data)
-		bot.answer_callback_query(query.id, chstr(data[str(query.message.chat.id)][1].gm, "Заявка на вступление в гей-клуб одобрена","Регистрация успешно завершена!"), show_alert=False)
+		bot.answer_callback_query(query.id, chstr(data[str(query.message.chat.id)][1].gm, "Заявка на вступление в гей-клуб одобрена","Регистрация успешно завершена!"), show_alert=True)
 		bot.edit_message_text(chstr(data[str(query.message.chat.id)][1].gm, "Ты в клубе(гей)","Вы зарегистрированы."), chat_id=query.message.chat.id, message_id=query.message.message_id)
 		markup = telebot.types.InlineKeyboardMarkup()
 		itembtn = telebot.types.InlineKeyboardButton(chstr(data[str(query.message.chat.id)][1].gm, "Зайти","Войти"), callback_data="login")
