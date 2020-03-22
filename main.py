@@ -5,7 +5,7 @@ global mutakabot
 
 TOKEN = '942507125:AAHYmIFiWXL1eiXBwvEOp3Esj3bgDi6Cwec'
 debug_mode = False
-NUMBER_OF_VOTES = 3
+NUMBER_OF_VOTES = 2
 
 import telebot, pickle, time
 from datetime import datetime
@@ -51,10 +51,7 @@ def chstr(mutakabot, strmut, strob):
 	return strmut if mutakabot else strob
 
 def addowdo(message):
-	if load() == {}:
-		return not(str(message.chat.id) in load().keys()) and isGroup(message.chat.type)
-	else:
-		return False
+	return not(str(message.chat.id) in load().keys()) and isGroup(message.chat.type)
 
 def nowtime():
 	temp = int(datetime.today().strftime(tstam))+3
@@ -204,6 +201,7 @@ def getargss(message):
 
 def showPanelManualy(messagechatid, messagefrom_userid, chat_id):
 	data = load()
+	chat_id = str(chat_id)
 	userdata = data[chat_id][1].participants[str(messagefrom_userid)]
 	markup = telebot.types.InlineKeyboardMarkup()
 	btn1 = telebot.types.InlineKeyboardButton("Добавить задачу", callback_data="addtask"+chat_id)
@@ -392,7 +390,8 @@ def getname(message):
 		data[str(group[0].id)][1].participants[str(user.id)][1].tasks.update({message.text:[message.text, None, None, None]})
 		bot.send_message(message.chat.id, chstr(group[1].gm, "Введите описание","Введите описание"))
 	else:
-		data[chat_id][1].participants[str(query.from_user.id)][1].adding_name = False
+		data[str(group[0].id)][1].participants[str(message.from_user.id)][1].adding_name = False
+		bot.send_message(message.chat.id, chstr(group[1].gm, "Слишком многа букав","Превышена допустимая длина"))
 		showPanelManualy(str(message.chat.id), str(message.from_user.id), group[0].id)
 
 	update(data)
