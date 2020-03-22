@@ -334,10 +334,11 @@ def voteno(query):
 
 @bot.callback_query_handler(func=lambda query: "didthetask" in query.data)
 def didthetask(query):
+	data = load()
 	chat_id = query.data[:query.data.find('didthetask')]
 	taskkey = query.data[len(chat_id)+10:]
 	bot.send_message(query.message.chat.id, chstr(data[chat_id][1].gm, "пруфы опусти","Отправьте фото-доказательство выполнения задачи"))
-	data = load()
+	
 	data[chat_id][1].participants[str(query.from_user.id)][1].giving_args = taskkey
 	update(data)
 
