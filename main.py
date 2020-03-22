@@ -340,7 +340,7 @@ def didthetask(query):
 def addtask(query):
 	chat_id = query.data[7:]
 	data = load()
-	bot.send_message(query.message.chat.id, chstr(data[chat_id][1].gm, "Введи название задачи, брат","Введите название задачи")+"\n*P.S. Одним словом до 12 букв*")
+	bot.send_message(query.message.chat.id, chstr(data[chat_id][1].gm, "Введи название задачи, брат","Введите название задачи")+"\n*P.S. Одним словом до 8 букв*")
 	
 	data[chat_id][1].participants[str(query.from_user.id)][1].adding_name = True
 	update(data)
@@ -385,7 +385,7 @@ def getname(message):
 	data = load()
 	group = isaddingname(message.from_user.id)
 	user = group[1].participants[str(message.from_user.id)][0]
-	if len(message.text)<=12:
+	if len(message.text)<=8:
 		data[str(group[0].id)][1].participants[str(user.id)][1].adding_name = False
 		data[str(group[0].id)][1].participants[str(user.id)][1].adding_description = True
 		data[str(group[0].id)][1].participants[str(user.id)][1].tasks.update({message.text:[message.text, None, None, None]})
