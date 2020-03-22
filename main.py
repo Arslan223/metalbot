@@ -391,7 +391,7 @@ def getname(message):
 		data[str(group[0].id)][1].participants[str(user.id)][1].tasks.update({message.text:[message.text, None, None, None]})
 		bot.send_message(message.chat.id, chstr(group[1].gm, "Введите описание","Введите описание"))
 	else:
-		data[group[0].id][1].participants[str(query.from_user.id)][1].adding_name = False
+		data[str(group[0].id)][1].participants[str(query.from_user.id)][1].adding_name = False
 		showPanelManualy(str(message.chat.id), str(message.from_user.id), group[0].id)
 
 	update(data)
