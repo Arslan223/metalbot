@@ -71,10 +71,7 @@ def isGroup(obj):
 
 def load():
 	with open('data.p', 'rb') as fp:
-		try:
-			return pickle.load(fp)
-		except EOFError:
-			return False
+		return pickle.load(fp)
 
 def update(obj):
 	with open('data.p', 'wb') as fp:
@@ -186,10 +183,9 @@ def makeVoting(photomess, group, taskkey, channel_id):
 def addGroup(message):
 	print(1)
 	data = load()
-	if not(data == False):
-		data.update({str(message.chat.id):[message.chat, Group(), None]})
-		update(data)
-		ch = False
+	data.update({str(message.chat.id):[message.chat, Group(), None]})
+	update(data)
+	ch = False
 
 @bot.message_handler(content_types=['photo'], func=lambda message: not(isGroup(message.chat.type)) and isgivingargs(str(message.from_user.id))!=False)
 def getargss(message):
@@ -208,8 +204,7 @@ def getargss(message):
 
 def showPanelManualy(messagechatid, messagefrom_userid, chat_id):
 	data = load()
-	chat_id = str(chat_id)
-	userdata = data[str(chat_id)][1].participants[str(messagefrom_userid)]
+	userdata = data[chat_id][1].participants[str(messagefrom_userid)]
 	markup = telebot.types.InlineKeyboardMarkup()
 	btn1 = telebot.types.InlineKeyboardButton("Добавить задачу", callback_data="addtask"+chat_id)
 	btn2 = telebot.types.InlineKeyboardButton("Мои задачи", callback_data="showtasks"+chat_id)
@@ -304,7 +299,7 @@ def voteyes(query):
 		if len(data[groupid][1].participants[userid1][1].tasks[taskkey][4][0]) >= NUMBER_OF_VOTES:
 			data[groupid][1].participants[userid1][1].tasks.pop(taskkey)
 			bot.delete_message(query.message.chat.id, query.message.message_id)
-			bot.send_message(query.message.chat.id, f"{data[groupid][1].participants[userid1][0].first_name} "+ chstr("успешно исполнил, циу✅","выполнил свою задачу✅"))
+			bot.send_message(query.message.chat.id, f"{data[groupid][1].participants[userid1][0].first_name} "+ chstr(data[groupid][1].gm, "успешно исполнил, циу✅","выполнил свою задачу✅"))
 	else:
 		bot.answer_callback_query(query.id, chstr(data[groupid][1].gm, "Ты хоть куда э, голосовал же уже🤬","Вы уже голосовали!"), show_alert=True)
 	update(data)
@@ -334,11 +329,10 @@ def voteno(query):
 
 @bot.callback_query_handler(func=lambda query: "didthetask" in query.data)
 def didthetask(query):
-	data = load()
 	chat_id = query.data[:query.data.find('didthetask')]
 	taskkey = query.data[len(chat_id)+10:]
 	bot.send_message(query.message.chat.id, chstr(data[chat_id][1].gm, "пруфы опусти","Отправьте фото-доказательство выполнения задачи"))
-	
+	data = load()
 	data[chat_id][1].participants[str(query.from_user.id)][1].giving_args = taskkey
 	update(data)
 
@@ -346,7 +340,7 @@ def didthetask(query):
 def addtask(query):
 	chat_id = query.data[7:]
 	data = load()
-	bot.send_message(query.message.chat.id, chstr(data[chat_id][1].gm, "Введи название задачи, брат","Введите название задачи")+"\n*P.S. Одним словом до 8 букв*")
+	bot.send_message(query.message.chat.id, chstr(data[chat_id][1].gm, "Введи название задачи, брат","Введите название задачи")+"\n*P.S. Одним словом до 12 букв*")
 	
 	data[chat_id][1].participants[str(query.from_user.id)][1].adding_name = True
 	update(data)
@@ -391,14 +385,13 @@ def getname(message):
 	data = load()
 	group = isaddingname(message.from_user.id)
 	user = group[1].participants[str(message.from_user.id)][0]
-	if len(message.text)<=8:
+	if len(message.text)<=12:
 		data[str(group[0].id)][1].participants[str(user.id)][1].adding_name = False
 		data[str(group[0].id)][1].participants[str(user.id)][1].adding_description = True
 		data[str(group[0].id)][1].participants[str(user.id)][1].tasks.update({message.text:[message.text, None, None, None]})
 		bot.send_message(message.chat.id, chstr(group[1].gm, "Введите описание","Введите описание"))
 	else:
-		bot.send_message(message.chat.id, chstr(group[1].gm, "Так многа букав","Слишком много букв в названии"))
-		data[str(group[0].id)][1].participants[str(message.from_user.id)][1].adding_name = False
+		data[chat_id][1].participants[str(query.from_user.id)][1].adding_name = False
 		showPanelManualy(str(message.chat.id), str(message.from_user.id), group[0].id)
 
 	update(data)
