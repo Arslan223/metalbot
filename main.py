@@ -71,7 +71,10 @@ def isGroup(obj):
 
 def load():
 	with open('data.p', 'rb') as fp:
-		return pickle.load(fp)
+		try:
+			return pickle.load(fp)
+		except EOFError:
+			return False
 
 def update(obj):
 	with open('data.p', 'wb') as fp:
@@ -183,9 +186,10 @@ def makeVoting(photomess, group, taskkey, channel_id):
 def addGroup(message):
 	print(1)
 	data = load()
-	data.update({str(message.chat.id):[message.chat, Group(), None]})
-	update(data)
-	ch = False
+	if not(data == False):
+		data.update({str(message.chat.id):[message.chat, Group(), None]})
+		update(data)
+		ch = False
 
 @bot.message_handler(content_types=['photo'], func=lambda message: not(isGroup(message.chat.type)) and isgivingargs(str(message.from_user.id))!=False)
 def getargss(message):
@@ -204,7 +208,8 @@ def getargss(message):
 
 def showPanelManualy(messagechatid, messagefrom_userid, chat_id):
 	data = load()
-	userdata = data[chat_id][1].participants[str(messagefrom_userid)]
+	chat_id = str(chat_id)
+	userdata = data[str(chat_id)][1].participants[str(messagefrom_userid)]
 	markup = telebot.types.InlineKeyboardMarkup()
 	btn1 = telebot.types.InlineKeyboardButton("Добавить задачу", callback_data="addtask"+chat_id)
 	btn2 = telebot.types.InlineKeyboardButton("Мои задачи", callback_data="showtasks"+chat_id)
@@ -391,6 +396,7 @@ def getname(message):
 		data[str(group[0].id)][1].participants[str(user.id)][1].tasks.update({message.text:[message.text, None, None, None]})
 		bot.send_message(message.chat.id, chstr(group[1].gm, "Введите описание","Введите описание"))
 	else:
+		bot.send_message(message.chat.id, chstr(group[1].gm, "Так многа букав","Слишком много букв в названии"))
 		data[str(group[0].id)][1].participants[str(message.from_user.id)][1].adding_name = False
 		showPanelManualy(str(message.chat.id), str(message.from_user.id), group[0].id)
 
