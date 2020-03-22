@@ -428,17 +428,26 @@ def gettime(message):
 	data[str(group[0].id)][1].participants[str(user.id)][1].adding_time = False
 	data[str(group[0].id)][1].participants[str(user.id)][1].adding_ok = True
 	task = data[str(group[0].id)][1].participants[str(user.id)][1].tasks
-	data[str(group[0].id)][1].participants[str(user.id)][1].tasks[list(task.keys())[-1]][3] = datetime.strptime(message.text, timeStamp)
+	ch = True
+	try:
+		data[str(group[0].id)][1].participants[str(user.id)][1].tasks[list(task.keys())[-1]][3] = datetime.strptime(message.text, timeStamp)
+	except ValueError:
+		data[str(group[0].id)][1].participants[str(user.id)][1].tasks.pop(list(task.keys())[-1])
+		data[str(group[0].id)][1].participants[str(user.id)][1].adding_ok = False
+		bot.send_message(message.chat.id, chstr(group[1].gm, "Иди нахуй","Неправильный формат времени"))
+		showPanelManualy(str(message.chat.id), str(message.from_user.id), group[0].id)
+		ch = False
 
 	"XX:XX XX.XX.XXXX"
 	"%H:%M %d.%m.%Y"
 
 	update(data)
-	markup = telebot.types.InlineKeyboardMarkup()
-	btn1 = telebot.types.InlineKeyboardButton(chstr(group[1].gm, "Все четко, брат","Все правильно"), callback_data="taskdone"+str(group[0].id))
-	btn2 = telebot.types.InlineKeyboardButton("Отмена", callback_data="canceltask"+str(group[0].id))
-	markup.row(btn1, btn2)
-	bot.send_message(message.chat.id, "Проверьте правильность введенных данных:", reply_markup=markup)
+	if ch:
+		markup = telebot.types.InlineKeyboardMarkup()
+		btn1 = telebot.types.InlineKeyboardButton(chstr(group[1].gm, "Все четко, брат","Все правильно"), callback_data="taskdone"+str(group[0].id))
+		btn2 = telebot.types.InlineKeyboardButton("Отмена", callback_data="canceltask"+str(group[0].id))
+		markup.row(btn1, btn2)
+		bot.send_message(message.chat.id, "Проверьте правильность введенных данных:", reply_markup=markup)
 
 # @bot.message_handler(func=lambda message: not(isGroup(message.chat.type)) and isaddingok(message.from_user.id))
 # def getok(message):
