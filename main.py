@@ -573,7 +573,12 @@ def deleteMess(message):
 		canUnMute()
 		canUnPost()
 
-bot.polling(none_stop=True)
+def pollingbot():
+	try:
+		bot.polling(none_stop=True)
+	except:
+		pollingbot()
 
+pollingbot()
 
 	
